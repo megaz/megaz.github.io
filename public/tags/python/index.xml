@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Zahir Abdi</title>
+    <link>http://localhost:64217/tags/python/</link>
+    <description>Recent content in Python on Zahir Abdi</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 08 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:64217/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Migrating from Pandas to Polars: A Performance Revolution for UN Data Processing</title>
+      <link>http://localhost:64217/posts/pandas-to-polars-migration/</link>
+      <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:64217/posts/pandas-to-polars-migration/</guid>
+      <description>&lt;p&gt;In the world of data processing, performance improvements can make the difference between a system that works and one that truly excels. Recently, I led a migration from Pandas to Polars for processing United Nations datasets, and the results were nothing short of remarkable. This post shares our journey, the challenges we faced, and the substantial performance gains we achieved.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-challenge-processing-massive-un-datasets&#34;&gt;The Challenge: Processing Massive UN Datasets&lt;/h2&gt;&#xA;&lt;p&gt;Working with United Nations data presents unique challenges. The datasets are often:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

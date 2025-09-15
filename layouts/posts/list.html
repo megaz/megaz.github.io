@@ -1,0 +1,26 @@
+{{/* Try block name 'main' first; if nothing shows, rename 'main' to 'content' */}}
+{{ define "main" }}
+<main class="container">
+  <h1>{{ .Title | default "Posts" }}</h1>
+  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ range $pages }}
+    <article style="margin:2rem 0; display:flex; gap:1rem; align-items:flex-start;">
+      {{/* If page-bundle image exists, process it; else use the static path */}}
+      {{ $img := (cond (and .Params.featured_image (ne (printf "%T" (.Params.featured_image)) "<nil>")) (.Resources.GetMatch .Params.featured_image) nil) }}
+      {{ if $img }}
+        {{ $thumb := $img.Fill "800x450 center" }}
+        <a href="{{ .RelPermalink }}"><img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" style="max-width:280px; border-radius:12px;"></a>
+      {{ else if .Params.featured_image }}
+        <a href="{{ .RelPermalink }}"><img src="{{ .Params.featured_image | relURL }}" alt="{{ .Title }}" style="max-width:280px; border-radius:12px;"></a>
+      {{ end }}
+
+      <div>
+        <h2 style="margin:0 0 .25rem 0;"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        <time datetime="{{ .Date }}">{{ .Date.Format "2006-01-02" }}</time>
+        <p>{{ .Summary | default (.Plain | truncate 200) }}</p>
+      </div>
+    </article>
+  {{ end }}
+</main>
+{{ end }}
+

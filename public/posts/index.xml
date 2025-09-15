@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Zahir Abdi</title>
+    <link>http://localhost:64217/posts/</link>
+    <description>Recent content in Posts on Zahir Abdi</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 25 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:64217/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Example Content</title>
+      <link>http://localhost:64217/posts/example/example/</link>
+      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:64217/posts/example/example/</guid>
+      <description>&lt;p&gt;&lt;img&#xA;  src=&#34;../montrealfall.jpg&#34;&#xA;  alt=&#34;Montreal Fall Scene&#34;&#xA;  loading=&#34;lazy&#34;&#xA;  decoding=&#34;async&#34;&#xA;  class=&#34;full-width&#34;&#xA;/&gt;&#xA;&#xA;&lt;/p&gt;&#xA;&lt;p&gt;This is an example blog post showcasing the beautiful Montreal fall scenery.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

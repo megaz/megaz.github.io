@@ -1,0 +1,22 @@
+baseURL = "https://megaz.github.io/"
+title = "Zahir Abdi"
+theme = "maverick"
+
+[pagination]
+  pagerSize = 10
+
+[params]
+  author = "Zahir Abdi"
+  items = 5          # how many posts to list on the homepage
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 2
