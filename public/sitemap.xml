@@ -2,24 +2,36 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:64217/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/posts/example/example/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/tags/data-engineering/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/tags/hugo/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/tags/pandas/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/posts/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/tags/performance/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/tags/sample/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/tags/polars/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/tags/</loc>
-    <lastmod>2024-11-25T00:00:00+00:00</lastmod>
+    <loc>https://megaz.github.io/posts/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:64217/categories/</loc>
+    <loc>https://megaz.github.io/tags/python/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://megaz.github.io/tags/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://megaz.github.io/posts/pandas-to-polars-migration/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://megaz.github.io/tags/un-data/</loc>
+    <lastmod>2025-09-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://megaz.github.io/categories/</loc>
   </url>
 </urlset>

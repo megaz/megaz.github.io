@@ -9,6 +9,11 @@ theme = "maverick"
   author = "Zahir Abdi"
   items = 5          # how many posts to list on the homepage
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
 [menu]
   [[menu.main]]
     identifier = "home"

@@ -2,24 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Zahir Abdi</title>
-    <link>http://localhost:64217/tags/</link>
+    <link>https://megaz.github.io/tags/</link>
     <description>Recent content in Tags on Zahir Abdi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 Nov 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:64217/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://megaz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Hugo</title>
-      <link>http://localhost:64217/tags/hugo/</link>
-      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:64217/tags/hugo/</guid>
+      <title>Data-Engineering</title>
+      <link>https://megaz.github.io/tags/data-engineering/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/data-engineering/</guid>
       <description></description>
     </item>
     <item>
-      <title>Sample</title>
-      <link>http://localhost:64217/tags/sample/</link>
-      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:64217/tags/sample/</guid>
+      <title>Pandas</title>
+      <link>https://megaz.github.io/tags/pandas/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/pandas/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Performance</title>
+      <link>https://megaz.github.io/tags/performance/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/performance/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Polars</title>
+      <link>https://megaz.github.io/tags/polars/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/polars/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Python</title>
+      <link>https://megaz.github.io/tags/python/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Un-Data</title>
+      <link>https://megaz.github.io/tags/un-data/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/tags/un-data/</guid>
       <description></description>
     </item>
   </channel>

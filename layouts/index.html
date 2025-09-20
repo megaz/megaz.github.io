@@ -8,26 +8,36 @@
       {{ partial "header.html" . }}
       {{ .Content }}
       {{ if gt (len ( where .Site.RegularPages "Section" "posts" )) 0 }}
-      <h1>Latest Posts</h1>
-      <section>
-        {{ range (first .Site.Params.items (where .Site.RegularPages "Section" "posts" ).ByDate.Reverse) }}
-          <article style="margin:2rem 0; display:flex; gap:1rem; align-items:flex-start;">
-            {{/* If page-bundle image exists, process it; else use the static path */}}
-            {{ $img := (cond (and .Params.featured_image (ne (printf "%T" (.Params.featured_image)) "<nil>")) (.Resources.GetMatch .Params.featured_image) nil) }}
-            {{ if $img }}
-              {{ $thumb := $img.Fill "400x225 center" }}
-              <a href="{{ .RelPermalink }}"><img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" style="max-width:200px; border-radius:8px;"></a>
-            {{ else if .Params.featured_image }}
-              <a href="{{ .RelPermalink }}"><img src="{{ .RelPermalink | replaceRE "/$" "" }}/../{{ .Params.featured_image }}" alt="{{ .Title }}" style="max-width:200px; border-radius:8px;"></a>
-            {{ end }}
-
-            <div>
-              <h2 style="margin:0 0 .25rem 0; font-size:1.2rem;"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-              <time class="g time" datetime="{{ dateFormat "2006-01-02" .Date }}">{{ dateFormat "2006-01-02" .Date }}</time>
-              <p style="margin:0.5rem 0 0 0;">{{ .Summary | default (.Plain | truncate 150) }}</p>
-            </div>
-          </article>
-        {{ end }}
+      <section class="latest-posts">
+        <h1 class="section-title">Latest Posts</h1>
+        <div class="posts-grid">
+          {{ range (first .Site.Params.items (where .Site.RegularPages "Section" "posts" ).ByDate.Reverse) }}
+            {{ $readingTime := math.Round (div (countwords .Content) 200.0) }}
+            {{ if lt $readingTime 1 }}{{ $readingTime = 1 }}{{ end }}
+            <article class="post-card">
+              <div class="post-content">
+                <div class="post-meta">
+                  <time class="post-date" datetime="{{ dateFormat "2006-01-02" .Date }}">{{ dateFormat "Jan 2, 2006" .Date }}</time>
+                  <span class="reading-time">{{ $readingTime }} min read</span>
+                </div>
+                
+                <h2 class="post-title">
+                  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                </h2>
+                
+                <p class="post-excerpt">{{ if eq .Title "The Migration That Cut Our UN Data Pipeline Time by 87%" }}How we achieved up to 29x speedups and 50% memory reduction in our UN data processing pipeline.{{ else }}{{ .Summary | default (.Plain | truncate 150) }}{{ end }}</p>
+                
+                {{ if .Params.tags }}
+                <div class="post-tags">
+                  {{ range first 3 .Params.tags }}
+                    <span class="tag">{{ . }}</span>
+                  {{ end }}
+                </div>
+                {{ end }}
+              </div>
+            </article>
+          {{ end }}
+        </div>
       </section>
       {{ end }}
     </div>

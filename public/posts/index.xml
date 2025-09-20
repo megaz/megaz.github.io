@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Zahir Abdi</title>
-    <link>http://localhost:64217/posts/</link>
+    <link>https://megaz.github.io/posts/</link>
     <description>Recent content in Posts on Zahir Abdi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 Nov 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:64217/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://megaz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Example Content</title>
-      <link>http://localhost:64217/posts/example/example/</link>
-      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:64217/posts/example/example/</guid>
-      <description>&lt;p&gt;&lt;img&#xA;  src=&#34;../montrealfall.jpg&#34;&#xA;  alt=&#34;Montreal Fall Scene&#34;&#xA;  loading=&#34;lazy&#34;&#xA;  decoding=&#34;async&#34;&#xA;  class=&#34;full-width&#34;&#xA;/&gt;&#xA;&#xA;&lt;/p&gt;&#xA;&lt;p&gt;This is an example blog post showcasing the beautiful Montreal fall scenery.&lt;/p&gt;</description>
+      <title>The Migration That Cut Our UN Data Pipeline Time by 87%</title>
+      <link>https://megaz.github.io/posts/pandas-to-polars-migration/</link>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://megaz.github.io/posts/pandas-to-polars-migration/</guid>
+      <description>&lt;p&gt;&lt;em&gt;How we achieved up to 29x speedups and 50% memory reduction in our UN data processing pipeline.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;At &lt;a href=&#34;https://unstats.un.org/UNSDWebsite/undatacommons/&#34;&gt;UN Data Commons&lt;/a&gt;, we work with billion-row statistical datasets spanning 200+ countries, 70+ years, and multiple demographic and economic indicators. Our Pandas-based pipeline served us well for smaller datasets but as volumes grew, performance and reliability broke down.&lt;/p&gt;&#xA;&lt;p&gt;Migrating to &lt;a href=&#34;https://pola.rs&#34;&gt;Polars&lt;/a&gt; was not just a library switch. It was a fundamental rethinking of how we process data at scale. The result: order-of-magnitude performance gains, 50–75% lower memory usage, and zero out-of-memory crashes.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
