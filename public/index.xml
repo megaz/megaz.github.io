@@ -3,19 +3,19 @@
     
     <title>Zahir Abdi</title>
     <description></description>
-    <link>http://localhost:1313/</link>
+    <link>https://megaz.github.io/</link>
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
     <lastBuildDate>Fri, 19 Sep 2025 00:00:00 +0000</lastBuildDate>
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
-    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
+    <atom:link href="https://megaz.github.io//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
       <title>The Migration That Cut Our UN Data Pipeline Time by 87%</title>
-      <link>http://localhost:1313/posts/pandas-to-polars-migration/</link>
+      <link>https://megaz.github.io/posts/pandas-to-polars-migration/</link>
       <description>&lt;p&gt;&lt;em&gt;How we achieved up to 29x speedups and 50% memory reduction in our UN data processing pipeline.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;At &lt;a href=&#34;https://unstats.un.org/UNSDWebsite/undatacommons/&#34;&gt;UN Data Commons&lt;/a&gt;, we work with billion-row statistical datasets spanning 200+ countries, 70+ years, and multiple demographic and economic indicators. Our Pandas-based pipeline served us well for smaller datasets but as volumes grew, performance and reliability broke down.&lt;/p&gt;
 &lt;p&gt;Migrating to &lt;a href=&#34;https://pola.rs&#34;&gt;Polars&lt;/a&gt; was not just a library switch. It was a fundamental rethinking of how we process data at scale. The result: order-of-magnitude performance gains, 50–75% lower memory usage, and zero out-of-memory crashes.&lt;/p&gt;
@@ -66,7 +66,7 @@
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;img
-  src=&#34;http://localhost:1313/images/processing_time_vs_size_linear.png&#34;
+  src=&#34;https://megaz.github.io/images/processing_time_vs_size_linear.png&#34;
   alt=&#34;Processing Time vs Dataset Size&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
@@ -76,7 +76,7 @@
 
 &lt;em&gt;Processing time comparison showing Polars&amp;rsquo; consistent performance across different dataset sizes&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img
-  src=&#34;http://localhost:1313/images/memory_vs_size_pretty.png&#34;
+  src=&#34;https://megaz.github.io/images/memory_vs_size_pretty.png&#34;
   alt=&#34;Memory Usage Comparison&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
@@ -170,7 +170,7 @@
 &lt;p&gt;The combination of performance, memory efficiency, and modern architecture made Polars the clear choice.&lt;/p&gt;
 &lt;h2 id=&#34;polars-the-technical-breakthrough&#34;&gt;Polars: The Technical Breakthrough&lt;/h2&gt;
 &lt;p&gt;&lt;img
-  src=&#34;http://localhost:1313/images/polar.png&#34;
+  src=&#34;https://megaz.github.io/images/polar.png&#34;
   alt=&#34;Polars Logo&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
@@ -259,7 +259,7 @@
 &lt;h3 id=&#34;the-real-test-our-most-complex-pipeline&#34;&gt;The Real Test: Our Most Complex Pipeline&lt;/h3&gt;
 &lt;p&gt;Our most complex pipeline involved running the ETL for ILO with a large amount of data performing complex transformations. This pipeline typically took 45 minutes to run and occasionally crashed with out-of-memory errors.&lt;/p&gt;
 &lt;p&gt;&lt;img
-  src=&#34;http://localhost:1313/images/ilo_time_bar_pretty_fixed.png&#34;
+  src=&#34;https://megaz.github.io/images/ilo_time_bar_pretty_fixed.png&#34;
   alt=&#34;ILO Processing Time&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
@@ -269,7 +269,7 @@
 
 &lt;em&gt;ILO dataset processing time: Pandas vs Polars performance comparison&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img
-  src=&#34;http://localhost:1313/images/ilo_memory_bar_pretty_fixed.png&#34;
+  src=&#34;https://megaz.github.io/images/ilo_memory_bar_pretty_fixed.png&#34;
   alt=&#34;ILO Memory Usage&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
@@ -375,7 +375,7 @@
 &lt;p&gt;The future looks bright: we&amp;rsquo;re now exploring parallel processing with Polars&amp;rsquo; lazy evaluation, streaming data processing for real-time analytics, and GPU acceleration for even faster processing. The migration to Polars was just the beginning of our data engineering transformation.&lt;/p&gt;
 </description>
       <author>Zahir Abdi</author>
-      <guid>http://localhost:1313/posts/pandas-to-polars-migration/</guid>
+      <guid>https://megaz.github.io/posts/pandas-to-polars-migration/</guid>
       <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
     </item>
     
