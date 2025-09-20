@@ -3,306 +3,252 @@
     
     <title>Zahir Abdi</title>
     <description></description>
-    <link>http://localhost:64217/</link>
+    <link>http://localhost:1313/</link>
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
-    <lastBuildDate>Sun, 08 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 19 Sep 2025 00:00:00 +0000</lastBuildDate>
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
-    <atom:link href="http://localhost:64217//atom.xml" rel="self" type="application/atom+xml"/>
+    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
-      <title>Migrating from Pandas to Polars: A Data Engineering Perspective</title>
-      <link>http://localhost:64217/posts/pandas-to-polars-migration/</link>
-      <description>&lt;p&gt;After a couple of days of struggling with performance bottlenecks in our UN data processing pipeline, our team made a strategic decision to evaluate modern alternatives to Pandas. What started as a performance optimization project became a complete architectural shift that transformed our data engineering capabilities.&lt;/p&gt;
+      <title>The Migration That Cut Our UN Data Pipeline Time by 87%</title>
+      <link>http://localhost:1313/posts/pandas-to-polars-migration/</link>
+      <description>&lt;p&gt;&lt;em&gt;How we achieved up to 29x speedups and 50% memory reduction in our UN data processing pipeline.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;At &lt;a href=&#34;https://unstats.un.org/UNSDWebsite/undatacommons/&#34;&gt;UN Data Commons&lt;/a&gt;, we work with billion-row statistical datasets spanning 200+ countries, 70+ years, and multiple demographic and economic indicators. Our Pandas-based pipeline served us well for smaller datasets but as volumes grew, performance and reliability broke down.&lt;/p&gt;
+&lt;p&gt;Migrating to &lt;a href=&#34;https://pola.rs&#34;&gt;Polars&lt;/a&gt; was not just a library switch. It was a fundamental rethinking of how we process data at scale. The result: order-of-magnitude performance gains, 50–75% lower memory usage, and zero out-of-memory crashes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Case in point (ILO dataset ETL):&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Pandas:&lt;/strong&gt; 45 minutes, 8GB RAM, occasional crashes&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Polars:&lt;/strong&gt; 6 minutes, 2GB RAM, stable every time&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this post, I&amp;rsquo;ll cover:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The performance bottlenecks that forced our migration&lt;/li&gt;
+&lt;li&gt;Technical evaluation of modern data processing alternatives&lt;/li&gt;
+&lt;li&gt;Why Polars emerged as the clear winner&lt;/li&gt;
+&lt;li&gt;Migration strategy and implementation details&lt;/li&gt;
+&lt;li&gt;Real-world performance results and impact&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;performance-results-at-a-glance&#34;&gt;Performance Results at a Glance&lt;/h2&gt;
+&lt;div class=&#34;performance-metrics&#34;&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Metric&lt;/th&gt;
+          &lt;th&gt;Pandas&lt;/th&gt;
+          &lt;th&gt;Polars&lt;/th&gt;
+          &lt;th&gt;Improvement&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Processing Time&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;45 minutes&lt;/td&gt;
+          &lt;td&gt;6 minutes&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;7.5x faster&lt;/strong&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Memory Usage&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;8GB RAM&lt;/td&gt;
+          &lt;td&gt;2GB RAM&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;75% reduction&lt;/strong&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Memory Errors&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;Frequent&lt;/td&gt;
+          &lt;td&gt;Zero&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;100% reliability&lt;/strong&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
 &lt;p&gt;&lt;img
-  src=&#34;polar.png&#34;
-  alt=&#34;Polars Performance&#34;
+  src=&#34;http://localhost:1313/images/processing_time_vs_size_linear.png&#34;
+  alt=&#34;Processing Time vs Dataset Size&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-&lt;/p&gt;
-&lt;p&gt;In this post, I&amp;rsquo;ll share our technical evaluation process, the alternatives we considered, and why Polars emerged as the clear winner for our use case. I&amp;rsquo;ll also walk you through our migration strategy and the substantial performance gains we achieved.&lt;/p&gt;
+
+&lt;em&gt;Processing time comparison showing Polars&amp;rsquo; consistent performance across different dataset sizes&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;http://localhost:1313/images/memory_vs_size_pretty.png&#34;
+  alt=&#34;Memory Usage Comparison&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+&lt;em&gt;Memory usage comparison demonstrating Polars&amp;rsquo; efficient memory management&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;the-challenge-scaling-un-data-processing&#34;&gt;The Challenge: Scaling UN Data Processing&lt;/h2&gt;
-&lt;p&gt;Our data engineering team processes United Nations datasets for policy analysis, handling complex multi-dimensional data across:&lt;/p&gt;
+&lt;p&gt;Our UN Data Commons platform processes massive statistical datasets for policy analysis and users across the world, handling complex multi-dimensional data across:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Population data&lt;/strong&gt;: 200+ countries, 70+ years, multiple demographic indicators&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Economic indicators&lt;/strong&gt;: GDP, trade flows, development metrics, financial flows&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Social data&lt;/strong&gt;: Education, health, gender equality, human development statistics&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Environmental data&lt;/strong&gt;: Climate indicators, resource usage, sustainability metrics&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The scale and complexity of these datasets presented significant engineering challenges. Our datasets range from millions to hundreds of millions of rows, with complex hierarchical structures and varying data quality across different sources.&lt;/p&gt;
-&lt;p&gt;Our existing Pandas-based pipeline was hitting fundamental scalability limits:&lt;/p&gt;
+&lt;p&gt;Our datasets range from millions to hundreds of millions of rows, with complex hierarchical structures and varying data quality across different sources. While our Pandas-based pipeline was working well for smaller datasets, we began hitting scalability challenges as data volumes grew:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Memory consumption exceeding available resources (8-16GB datasets on 32GB instances)&lt;/li&gt;
-&lt;li&gt;Processing times stretching into hours for complex aggregations&lt;/li&gt;
-&lt;li&gt;Frequent out-of-memory errors during large joins&lt;/li&gt;
-&lt;li&gt;Inefficient garbage collection causing unpredictable performance&lt;/li&gt;
-&lt;li&gt;Limited parallelization capabilities&lt;/li&gt;
+&lt;li&gt;Processing times increasing from minutes to hours for complex aggregations&lt;/li&gt;
+&lt;li&gt;Memory consumption approaching resource limits (8-16GB datasets on 32GB instances)&lt;/li&gt;
+&lt;li&gt;Occasional out-of-memory errors during large joins&lt;/li&gt;
+&lt;li&gt;Performance bottlenecks in specific operations like &lt;code&gt;iterrows()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;technical-evaluation-exploring-modern-data-processing-alternatives&#34;&gt;Technical Evaluation: Exploring Modern Data Processing Alternatives&lt;/h2&gt;
-&lt;p&gt;Before committing to any solution, we conducted a comprehensive evaluation of modern data processing frameworks. Our evaluation criteria focused on:&lt;/p&gt;
+&lt;h2 id=&#34;the-problem-pandas-at-scale&#34;&gt;The Problem: Pandas at Scale&lt;/h2&gt;
+&lt;p&gt;Our UN Data Commons project processes massive statistical datasets for policy analysis, handling complex multi-dimensional data across 200+ countries, 70+ years, and multiple demographic indicators. While Pandas worked well for smaller datasets, we hit scalability challenges as data volumes grew:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Performance&lt;/strong&gt;: Processing speed and memory efficiency&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Scalability&lt;/strong&gt;: Ability to handle our largest datasets&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Ecosystem compatibility&lt;/strong&gt;: Integration with existing Python data science tools&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Development experience&lt;/strong&gt;: Learning curve and developer productivity&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Maintenance&lt;/strong&gt;: Long-term support and community adoption&lt;/li&gt;
+&lt;li&gt;Processing times increasing from minutes to hours for complex aggregations&lt;/li&gt;
+&lt;li&gt;Memory consumption approaching resource limits (8-16GB datasets on 32GB instances)&lt;/li&gt;
+&lt;li&gt;Occasional out-of-memory errors during large joins&lt;/li&gt;
+&lt;li&gt;Performance bottlenecks in specific operations like &lt;code&gt;iterrows()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;alternatives-considered&#34;&gt;Alternatives Considered&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;1. Dask&lt;/strong&gt;
-Dask was our first serious consideration. It offers distributed computing capabilities and maintains Pandas-like syntax, which would minimize migration effort.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Pros:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Familiar Pandas-like API&lt;/li&gt;
-&lt;li&gt;Distributed computing capabilities&lt;/li&gt;
-&lt;li&gt;Mature ecosystem with good documentation&lt;/li&gt;
-&lt;li&gt;Easy integration with existing Pandas workflows&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Cons:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Complex setup for distributed computing&lt;/li&gt;
-&lt;li&gt;Overhead from distributed coordination&lt;/li&gt;
-&lt;li&gt;Still fundamentally limited by Pandas&amp;rsquo; memory model&lt;/li&gt;
-&lt;li&gt;Performance gains were modest (2-3x) for our use cases&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;2. Modin&lt;/strong&gt;
-Modin promised &amp;ldquo;Pandas at scale&amp;rdquo; with minimal code changes, using Ray or Dask as backends.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Pros:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Drop-in replacement for Pandas&lt;/li&gt;
-&lt;li&gt;Minimal code changes required&lt;/li&gt;
-&lt;li&gt;Good performance on some operations&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Cons:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Inconsistent performance across different operations&lt;/li&gt;
-&lt;li&gt;Limited support for complex data transformations&lt;/li&gt;
-&lt;li&gt;Still bound by Pandas&amp;rsquo; fundamental limitations&lt;/li&gt;
-&lt;li&gt;Less mature than other alternatives&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;3. Vaex&lt;/strong&gt;
-Vaex specializes in out-of-core processing of large datasets using memory mapping.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Pros:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Excellent for truly massive datasets&lt;/li&gt;
-&lt;li&gt;Memory-efficient processing&lt;/li&gt;
-&lt;li&gt;Good visualization capabilities&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Cons:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Limited to specific use cases&lt;/li&gt;
-&lt;li&gt;Less flexible for complex transformations&lt;/li&gt;
-&lt;li&gt;Smaller community and ecosystem&lt;/li&gt;
-&lt;li&gt;Steeper learning curve&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;4. Apache Spark with PySpark&lt;/strong&gt;
-We evaluated Spark for distributed processing capabilities.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Pros:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Proven at massive scale&lt;/li&gt;
-&lt;li&gt;Excellent for distributed computing&lt;/li&gt;
-&lt;li&gt;Rich ecosystem&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Cons:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Significant infrastructure overhead&lt;/li&gt;
-&lt;li&gt;Complex setup and maintenance&lt;/li&gt;
-&lt;li&gt;Overkill for our dataset sizes&lt;/li&gt;
-&lt;li&gt;Steep learning curve for the team&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Performance limitations for medium-scale data&lt;/strong&gt;: For datasets in the 1-200GB range (typical for our use case), Polars outperforms Spark by avoiding cluster overhead, JVM serialization costs, and leveraging Rust + Arrow for vectorization&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;5. Polars&lt;/strong&gt;
-Polars emerged as a compelling option with its Rust-based implementation and modern architecture.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Pros:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Exceptional performance (5-15x faster than Pandas)&lt;/li&gt;
-&lt;li&gt;Memory-efficient with Apache Arrow backend&lt;/li&gt;
-&lt;li&gt;Lazy evaluation with query optimization&lt;/li&gt;
-&lt;li&gt;Growing ecosystem and community&lt;/li&gt;
-&lt;li&gt;Clean, functional API design&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Cons:&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Newer library with evolving API&lt;/li&gt;
-&lt;li&gt;Learning curve for functional programming style&lt;/li&gt;
-&lt;li&gt;Some ecosystem compatibility challenges&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;[Diagram 1: Performance Comparison Chart - Pandas vs Polars vs Dask vs Modin]&lt;/em&gt;&lt;/p&gt;
-&lt;h3 id=&#34;evaluation-results&#34;&gt;Evaluation Results&lt;/h3&gt;
-&lt;p&gt;Our benchmarking revealed that Polars consistently outperformed all alternatives across our typical workloads:&lt;/p&gt;
+&lt;p&gt;One particular function using &lt;code&gt;iterrows()&lt;/code&gt; was taking over 2 hours to process 100,000 rows from our ILO dataset - a clear optimization target.&lt;/p&gt;
+&lt;h2 id=&#34;technical-evaluation-why-polars-won&#34;&gt;Technical Evaluation: Why Polars Won&lt;/h2&gt;
+&lt;p&gt;We evaluated five modern data processing frameworks against our criteria: performance, scalability, ecosystem compatibility, and development experience.&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Framework&lt;/th&gt;
+          &lt;th&gt;Performance vs Pandas&lt;/th&gt;
+          &lt;th&gt;Memory Usage&lt;/th&gt;
+          &lt;th&gt;Learning Curve&lt;/th&gt;
+          &lt;th&gt;Production Ready&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Dask&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;2-3x faster&lt;/td&gt;
+          &lt;td&gt;Similar&lt;/td&gt;
+          &lt;td&gt;Low&lt;/td&gt;
+          &lt;td&gt;Yes&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Modin&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;1-2x faster&lt;/td&gt;
+          &lt;td&gt;Similar&lt;/td&gt;
+          &lt;td&gt;Low&lt;/td&gt;
+          &lt;td&gt;No&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Vaex&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;3-5x faster&lt;/td&gt;
+          &lt;td&gt;50% less&lt;/td&gt;
+          &lt;td&gt;High&lt;/td&gt;
+          &lt;td&gt;No&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Spark&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;2-4x faster&lt;/td&gt;
+          &lt;td&gt;30% less&lt;/td&gt;
+          &lt;td&gt;High&lt;/td&gt;
+          &lt;td&gt;Yes&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Polars&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;8-15x faster&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;50% less&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;Yes&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Our benchmarking revealed that Polars consistently outperformed all alternatives:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Small datasets (&amp;lt; 1M rows)&lt;/strong&gt;: Polars 3-5x faster than Pandas, 2x faster than Dask&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Medium datasets (1-10M rows)&lt;/strong&gt;: Polars 5-8x faster than Pandas, 3x faster than Dask&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Large datasets (&amp;gt; 10M rows)&lt;/strong&gt;: Polars 8-15x faster than Pandas, 4x faster than Dask&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Memory usage&lt;/strong&gt;: Polars used 40-60% less memory than Pandas across all dataset sizes&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The combination of performance, memory efficiency, and modern architecture made Polars the clear choice for our migration.&lt;/p&gt;
-&lt;h3 id=&#34;the-magic-of-lazy-evaluation&#34;&gt;The Magic of Lazy Evaluation&lt;/h3&gt;
-&lt;p&gt;Here&amp;rsquo;s the thing about Pandas: it&amp;rsquo;s eager. When you write &lt;code&gt;df.groupby(&#39;country&#39;).agg({&#39;population&#39;: &#39;sum&#39;})&lt;/code&gt;, it immediately starts processing. But what if you could optimize the entire query before executing it?&lt;/p&gt;
-&lt;p&gt;That&amp;rsquo;s exactly what Polars does. It builds an execution plan and optimizes it before running anything:&lt;/p&gt;
+&lt;p&gt;The combination of performance, memory efficiency, and modern architecture made Polars the clear choice.&lt;/p&gt;
+&lt;h2 id=&#34;polars-the-technical-breakthrough&#34;&gt;Polars: The Technical Breakthrough&lt;/h2&gt;
+&lt;p&gt;&lt;img
+  src=&#34;http://localhost:1313/images/polar.png&#34;
+  alt=&#34;Polars Logo&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+*Polars: The high-performance data processing library that changed everything.  Credit to Ritchie Vink for this brilliant piece of &lt;a href=&#34;https://www.ritchievink.com/blog/2021/02/28/i-wrote-one-of-the-fastest-dataframe-libraries/*&#34;&gt;engineering&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Polars achieves its performance through several key innovations that address Pandas&amp;rsquo; fundamental limitations:&lt;/p&gt;
+&lt;h3 id=&#34;lazy-evaluation-query-optimization-before-execution&#34;&gt;Lazy Evaluation: Query Optimization Before Execution&lt;/h3&gt;
+&lt;p&gt;Pandas is eager as it executes operations immediately. Polars builds an execution plan and optimizes it before running anything:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Pandas: &amp;#34;Execute everything immediately!&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;massive_un_dataset.csv&amp;#39;&lt;/span&gt;)  &lt;span style=&#34;color:#75715e&#34;&gt;# Loads entire file into memory&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;groupby(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg({&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;sum&amp;#39;&lt;/span&gt;})  &lt;span style=&#34;color:#75715e&#34;&gt;# Processes everything&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;groupby(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;geography&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg({&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;sum&amp;#39;&lt;/span&gt;})  &lt;span style=&#34;color:#75715e&#34;&gt;# Processes everything&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Polars: &amp;#34;Let me think about this first...&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;massive_un_dataset.csv&amp;#39;&lt;/span&gt;)  &lt;span style=&#34;color:#75715e&#34;&gt;# Just creates a plan&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum())&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect()  &lt;span style=&#34;color:#75715e&#34;&gt;# Optimizes then executes&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The difference is night and day. Polars can push down filters, eliminate unnecessary columns, and optimize joins before any actual processing happens.&lt;/p&gt;
-&lt;h3 id=&#34;memory-efficiency-that-actually-works&#34;&gt;Memory Efficiency That Actually Works&lt;/h3&gt;
-&lt;p&gt;&lt;em&gt;[Diagram 2: Memory Usage Comparison - Before and After Migration]&lt;/em&gt;&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;geography&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum())&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect()  &lt;span style=&#34;color:#75715e&#34;&gt;# Optimizes then executes&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Polars can push down filters, eliminate unnecessary columns, and optimize joins before any actual processing happens.&lt;/p&gt;
+&lt;h3 id=&#34;apache-arrow-memory-efficiency-that-actually-works&#34;&gt;Apache Arrow: Memory Efficiency That Actually Works&lt;/h3&gt;
 &lt;p&gt;Polars uses Apache Arrow under the hood, which means:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Zero-copy operations&lt;/strong&gt;: No unnecessary data copying&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Columnar storage&lt;/strong&gt;: Data is stored in columns, not rows (much more cache-friendly)&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Automatic memory management&lt;/strong&gt;: No more manual garbage collection tuning&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I remember the first time I ran our population dataset through Polars. The memory usage graph looked like a flat line instead of the jagged mountain range we were used to with Pandas.&lt;/p&gt;
-&lt;h2 id=&#34;the-migration-a-step-by-step-journey&#34;&gt;The Migration: A Step-by-Step Journey&lt;/h2&gt;
-&lt;h3 id=&#34;phase-1-the-lets-just-try-it-experiment&#34;&gt;Phase 1: The &amp;ldquo;Let&amp;rsquo;s Just Try It&amp;rdquo; Experiment&lt;/h3&gt;
-&lt;p&gt;I&amp;rsquo;ll be honest—I didn&amp;rsquo;t start with a grand migration plan. I was just frustrated and wanted to see if Polars could actually deliver on its promises. So I grabbed a small subset of our population data (about 100K rows) and wrote a quick comparison.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; polars &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; pl
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; pandas &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; pd
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
+&lt;p&gt;The memory usage graph went from a jagged mountain range to a flat line.&lt;/p&gt;
+&lt;h2 id=&#34;the-migration-key-performance-optimizations&#34;&gt;The Migration: Key Performance Optimizations&lt;/h2&gt;
+&lt;p&gt;The migration wasn&amp;rsquo;t just about switching libraries; it was about fundamentally rethinking how we process data. Here are the key optimizations that delivered the biggest impact:&lt;/p&gt;
+&lt;h3 id=&#34;1-eliminate-iterrows---no-exceptions&#34;&gt;1. Eliminate &lt;code&gt;iterrows()&lt;/code&gt; - No Exceptions&lt;/h3&gt;
+&lt;p&gt;The first rule of Polars optimization: if you&amp;rsquo;re using &lt;code&gt;iterrows()&lt;/code&gt;, you&amp;rsquo;re doing it wrong. We replaced every single &lt;code&gt;iterrows()&lt;/code&gt; call with vectorized operations.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Before (Pandas):&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;add_dimension_and_attribute_lists&lt;/span&gt;(df):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; index, row &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;iterrows():
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        dimension_list &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; col &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; dimension_columns:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;notna(row[col]):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                dimension_list&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(row[col])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;at[index, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;dimensions&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(dimension_list)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; df
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;After (Polars):&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;add_dimension_and_attribute_lists&lt;/span&gt;(df):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    df_pl &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;from_pandas(df)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    df_pl &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df_pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;with_columns([
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;concat_str(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(col)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(col)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;is_not_null()),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            separator&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        )&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;alias(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;dimensions&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; col &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; dimension_columns
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    ])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; df_pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_pandas()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Result: 29x faster execution time.&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;2-memory-optimization-through-data-types&#34;&gt;2. Memory Optimization Through Data Types&lt;/h3&gt;
+&lt;p&gt;We optimized our data types and saw dramatic memory reductions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Optimized data types for memory efficiency&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;polars_kwargs &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;dtypes&amp;#39;&lt;/span&gt;: {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;concept_id&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Categorical,  &lt;span style=&#34;color:#75715e&#34;&gt;# Categorical for repeated strings&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;concept_name&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Categorical,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;concept_role&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Categorical,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;codeList&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Categorical,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    },
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;infer_schema_length&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;,  &lt;span style=&#34;color:#75715e&#34;&gt;# Limit schema inference&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;low_memory&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;,  &lt;span style=&#34;color:#75715e&#34;&gt;# Enable low memory mode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Our original Pandas approach (the one that was killing us)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;process_with_pandas&lt;/span&gt;(file_path):
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Loading data with Pandas...&amp;#34;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(file_path)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;groupby([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg({
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;sum&amp;#39;&lt;/span&gt;,
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;mean&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    })&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reset_index()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Pandas took: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time() &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; start&lt;span style=&#34;color:#e6db74&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;.2f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; seconds&amp;#34;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# The new Polars approach&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;process_with_polars&lt;/span&gt;(file_path):
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Loading data with Polars...&amp;#34;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(file_path)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg([
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum(),
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mean()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              ])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect())
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Polars took: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time() &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; start&lt;span style=&#34;color:#e6db74&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;.2f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; seconds&amp;#34;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The results were&amp;hellip; well, let&amp;rsquo;s just say I had to run the test three times to make sure I wasn&amp;rsquo;t hallucinating:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Pandas took: 12.34 seconds
-Polars took: 3.21 seconds
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That&amp;rsquo;s a 3.8x speedup on a relatively small dataset. But more importantly, the memory usage was dramatically different. Pandas was using about 400MB of RAM, while Polars used around 150MB.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;[Diagram 3: Initial Performance Test Results - Small Dataset]&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;I was sold. Time to scale up.&lt;/p&gt;
-&lt;h3 id=&#34;phase-2-the-real-test---our-most-complex-pipeline&#34;&gt;Phase 2: The Real Test - Our Most Complex Pipeline&lt;/h3&gt;
-&lt;p&gt;Now came the moment of truth. We had a particularly nasty data processing pipeline that was the bane of our existence. It involved:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Joining 5 different UN datasets&lt;/li&gt;
-&lt;li&gt;Complex aggregations across multiple dimensions&lt;/li&gt;
-&lt;li&gt;Handling missing values and data quality issues&lt;/li&gt;
-&lt;li&gt;Calculating derived indicators&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This pipeline typically took 45 minutes to run and would frequently crash with out-of-memory errors. Here&amp;rsquo;s what it looked like in Pandas:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# The old Pandas nightmare (simplified for readability)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;process_un_indicators_pandas&lt;/span&gt;(data_paths):
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Load everything into memory immediately&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    pop_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(data_paths[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    gdp_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(data_paths[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    health_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(data_paths[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ... more datasets&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Multiple joins (each creating a copy)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pop_data&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;merge(gdp_data, on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;merge(health_data, on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Complex calculations&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population_density&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;area&amp;#39;&lt;/span&gt;]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;fillna(
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mean()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Filter and aggregate&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result[result[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2000&lt;/span&gt;]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    final &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;groupby([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;region&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg({
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;sum&amp;#39;&lt;/span&gt;,
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;mean&amp;#39;&lt;/span&gt;,
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;mean&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    })&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reset_index()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; final&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sort_values([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;region&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And here&amp;rsquo;s the Polars version:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# The new Polars beauty&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;process_un_indicators_polars&lt;/span&gt;(data_paths):
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Read datasets lazily (no memory usage yet!)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    datasets &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(path) &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; path &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; data_paths]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Chain everything together with lazy evaluation&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (datasets[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(datasets[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(datasets[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;], on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;with_columns([
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  &lt;span style=&#34;color:#75715e&#34;&gt;# Calculate derived indicators&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  (pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;area&amp;#39;&lt;/span&gt;))&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;alias(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population_density&amp;#39;&lt;/span&gt;),
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  (pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;))&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;alias(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;),
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  &lt;span style=&#34;color:#75715e&#34;&gt;# Handle missing values efficiently&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;fill_null(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mean())
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              ])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2000&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;region&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg([
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum(),
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp_per_capita&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mean(),
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                  pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;life_expectancy&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mean()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              ])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sort([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;region&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;])
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect())  &lt;span style=&#34;color:#75715e&#34;&gt;# Only now does it actually execute&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The results were absolutely mind-blowing:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Pandas: 45 minutes, 8GB RAM, frequent crashes
-Polars: 6 minutes, 2GB RAM, zero crashes
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;[Diagram 4: Complex Pipeline Performance Comparison]&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;That&amp;rsquo;s a 7.5x speedup and 75% memory reduction on our most complex pipeline. I actually had to check the results three times to make sure they were identical (they were).&lt;/p&gt;
-&lt;h3 id=&#34;phase-3-the-production-rollout-and-the-mistakes-we-made&#34;&gt;Phase 3: The Production Rollout (And the Mistakes We Made)&lt;/h3&gt;
-&lt;p&gt;Here&amp;rsquo;s where things got interesting. I was so excited about the performance gains that I made some classic mistakes:&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Mistake #1: The Big Bang Approach&lt;/strong&gt;
-I initially wanted to migrate everything at once. Bad idea. We ran into compatibility issues with some of our existing tools that expected Pandas DataFrames.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Mistake #2: Underestimating the Learning Curve&lt;/strong&gt;
-I assumed everyone would pick up Polars syntax immediately. Turns out, the functional style takes some getting used to.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Mistake #3: Not Planning for Hybrid Workflows&lt;/strong&gt;
-Some of our downstream tools still needed Pandas DataFrames, so we needed conversion strategies.&lt;/p&gt;
-&lt;p&gt;Here&amp;rsquo;s what actually worked:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Parallel Running&lt;/strong&gt;: We ran both systems side-by-side for a month to ensure accuracy&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Gradual Migration&lt;/strong&gt;: One dataset at a time, starting with the most painful ones&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Team Training&lt;/strong&gt;: Weekly &amp;ldquo;Polars Office Hours&amp;rdquo; where I&amp;rsquo;d help people with syntax&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Conversion Utilities&lt;/strong&gt;: Simple functions to convert between Polars and Pandas when needed&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Our conversion utility (life-saver!)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;polars_to_pandas_safe&lt;/span&gt;(polars_df):
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;Convert Polars to Pandas, handling edge cases&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; polars_df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_pandas()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Exception&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; e:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Conversion failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;e&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# Fallback: convert to dict then to pandas&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DataFrame(polars_df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_dicts())
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;the-numbers-dont-lie-performance-results&#34;&gt;The Numbers Don&amp;rsquo;t Lie: Performance Results&lt;/h2&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use Int32 instead of Int64, Float32 instead of Float64&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;polars_dtypes[col] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Int32  &lt;span style=&#34;color:#75715e&#34;&gt;# 50% memory reduction&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;polars_dtypes[col] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Float32  &lt;span style=&#34;color:#75715e&#34;&gt;# 50% memory reduction&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Result: 50% reduction in memory usage.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;the-migration-real-world-performance-results&#34;&gt;The Migration: Real-World Performance Results&lt;/h2&gt;
 &lt;p&gt;After three months of running both systems in parallel, here are the hard numbers:&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;[Diagram 5: Comprehensive Performance Comparison - All Dataset Sizes]&lt;/em&gt;&lt;/p&gt;
 &lt;h3 id=&#34;processing-speed-the-good-stuff&#34;&gt;Processing Speed (The Good Stuff)&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Small datasets (&amp;lt; 1M rows)&lt;/strong&gt;: 2-3x faster&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Medium datasets (1-10M rows)&lt;/strong&gt;: 4-6x faster&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Large datasets (&amp;gt; 10M rows)&lt;/strong&gt;: 8-12x faster&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Our monster dataset (50M+ rows)&lt;/strong&gt;: 15x faster (this one made me do a happy dance)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Our monster dataset (50M+ rows)&lt;/strong&gt;: 15x faster&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;memory-efficiency-the-real-game-changer&#34;&gt;Memory Efficiency (The Real Game-Changer)&lt;/h3&gt;
 &lt;ul&gt;
@@ -310,68 +256,62 @@ Some of our downstream tools still needed Pandas DataFrames, so we needed conver
 &lt;li&gt;&lt;strong&gt;Memory consistency&lt;/strong&gt;: No more out-of-memory errors (seriously, zero)&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Garbage collection&lt;/strong&gt;: Went from &amp;ldquo;constant headache&amp;rdquo; to &amp;ldquo;barely noticeable&amp;rdquo;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;development-experience-the-hidden-benefits&#34;&gt;Development Experience (The Hidden Benefits)&lt;/h3&gt;
+&lt;h3 id=&#34;the-real-test-our-most-complex-pipeline&#34;&gt;The Real Test: Our Most Complex Pipeline&lt;/h3&gt;
+&lt;p&gt;Our most complex pipeline involved running the ETL for ILO with a large amount of data performing complex transformations. This pipeline typically took 45 minutes to run and occasionally crashed with out-of-memory errors.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;http://localhost:1313/images/ilo_time_bar_pretty_fixed.png&#34;
+  alt=&#34;ILO Processing Time&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+&lt;em&gt;ILO dataset processing time: Pandas vs Polars performance comparison&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;http://localhost:1313/images/ilo_memory_bar_pretty_fixed.png&#34;
+  alt=&#34;ILO Memory Usage&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+&lt;em&gt;ILO dataset memory consumption: Dramatic reduction with Polars&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Pandas approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Load everything into memory immediately&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pop_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(data_paths[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gdp_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(data_paths[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Multiple joins (each creating a copy)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pop_data&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;merge(gdp_data, on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Complex calculations and aggregations...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Polars approach:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read datasets lazily (no memory usage yet!)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;datasets &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(path) &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; path &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; data_paths]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Chain everything together with lazy evaluation&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (datasets[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(datasets[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country_code&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;with_columns([&lt;span style=&#34;color:#f92672&#34;&gt;...&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect())  &lt;span style=&#34;color:#75715e&#34;&gt;# Only now does it execute&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Results:&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Feedback cycle&lt;/strong&gt;: From &amp;ldquo;go get coffee&amp;rdquo; to &amp;ldquo;wait, it&amp;rsquo;s done already?&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Code readability&lt;/strong&gt;: The functional style actually makes complex operations clearer&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Error handling&lt;/strong&gt;: Polars gives you much better error messages (no more cryptic Pandas errors)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pandas: 45 minutes, 8GB RAM, occasional crashes&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Polars: 6 minutes, 2GB RAM, zero crashes&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;But here&amp;rsquo;s the thing that surprised me most: the impact on our team&amp;rsquo;s productivity. Our data scientists went from spending 60% of their time waiting for data to spending 90% of their time actually analyzing it.&lt;/p&gt;
-&lt;h2 id=&#34;the-real-world-impact-beyond-just-speed&#34;&gt;The Real-World Impact: Beyond Just Speed&lt;/h2&gt;
-&lt;h3 id=&#34;for-our-data-scientists-the-happy-campers&#34;&gt;For Our Data Scientists (The Happy Campers)&lt;/h3&gt;
+&lt;p&gt;That&amp;rsquo;s a 7.5x speedup and 75% memory reduction on our most complex pipeline.&lt;/p&gt;
+&lt;h2 id=&#34;the-real-world-impact&#34;&gt;The Real-World Impact&lt;/h2&gt;
+&lt;p&gt;The performance improvements transformed our team&amp;rsquo;s productivity:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Faster experimentation&lt;/strong&gt;: &amp;ldquo;Can we try this analysis?&amp;rdquo; went from &amp;ldquo;Sure, come back in 2 hours&amp;rdquo; to &amp;ldquo;Sure, give me 5 minutes&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Faster experimentation&lt;/strong&gt;: Analysis requests went from &amp;ldquo;come back in 2 hours&amp;rdquo; to &amp;ldquo;give me 5 minutes&amp;rdquo;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Larger datasets&lt;/strong&gt;: We can now process datasets that were previously impossible&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Better insights&lt;/strong&gt;: More time for actual analysis instead of waiting for data&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Less frustration&lt;/strong&gt;: No more &amp;ldquo;why is my laptop on fire?&amp;rdquo; moments&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;for-the-organization-the-bottom-line&#34;&gt;For the Organization (The Bottom Line)&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Cost reduction&lt;/strong&gt;: 40% reduction in cloud compute costs (our CFO was very happy)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cost reduction&lt;/strong&gt;: 40% reduction in cloud compute costs&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Faster delivery&lt;/strong&gt;: Policy reports that used to take 3 days now take 6 hours&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Scalability&lt;/strong&gt;: We can handle growing data volumes without constantly upgrading infrastructure&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Team morale&lt;/strong&gt;: Happy data scientists are productive data scientists&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;real-world-impact-example&#34;&gt;Real-World Impact Example&lt;/h3&gt;
-&lt;p&gt;A recent policy analysis request illustrates the transformation. The policy team requested a comprehensive analysis of education spending and GDP growth relationships across all countries with historical trends and regional comparisons.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Previous workflow (Pandas):&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; A recent policy analysis request for education spending and GDP growth relationships across all countries:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Initial processing: 2-3 hours&lt;/li&gt;
-&lt;li&gt;Additional analysis iterations: 1-2 hours each&lt;/li&gt;
-&lt;li&gt;Total delivery time: 2-3 business days&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Previous workflow&lt;/strong&gt;: 2-3 hours initial processing, 1-2 hours per iteration, 2-3 business days total&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Current workflow&lt;/strong&gt;: 15-20 minutes initial processing, 5-10 minutes per iteration, same day delivery&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Current workflow (Polars):&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Initial processing: 15-20 minutes&lt;/li&gt;
-&lt;li&gt;Additional analysis iterations: 5-10 minutes each&lt;/li&gt;
-&lt;li&gt;Total delivery time: Same day&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This improvement enabled our team to provide more comprehensive analysis with multiple iterations and deeper insights, rather than being constrained by processing time limitations.&lt;/p&gt;
-&lt;h2 id=&#34;migration-lessons-learned&#34;&gt;Migration Lessons Learned&lt;/h2&gt;
-&lt;h3 id=&#34;1-start-small-scale-gradually&#34;&gt;1. &lt;strong&gt;Start Small, Scale Gradually&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Our initial approach of attempting a complete migration was overly ambitious. We learned to start with our most performance-critical pipelines and gradually expand the migration scope.&lt;/p&gt;
-&lt;h3 id=&#34;2-leverage-lazy-evaluation-for-optimal-performance&#34;&gt;2. &lt;strong&gt;Leverage Lazy Evaluation for Optimal Performance&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Polars&amp;rsquo; lazy evaluation provides significant performance benefits through query optimization. Design your pipelines to maximize these advantages:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Good: Chain operations for optimization&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;data.csv&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum())
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect())
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Bad: Multiple collect() calls&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;scan_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;data.csv&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;collect()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;filtered &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;year&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; filtered&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;group_by(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;country&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;agg(pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;col(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sum())
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;3-memory-management-and-data-type-optimization&#34;&gt;3. &lt;strong&gt;Memory Management and Data Type Optimization&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;Proper memory management and data type selection are crucial for optimal performance. Monitor memory usage patterns and optimize data types:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Good: Use appropriate data types&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;data.csv&amp;#39;&lt;/span&gt;, dtypes&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;population&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Int64, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gdp&amp;#39;&lt;/span&gt;: pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Float64})
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Bad: Let Polars guess (might use more memory than needed)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;data.csv&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;4-team-training-and-knowledge-transfer&#34;&gt;4. &lt;strong&gt;Team Training and Knowledge Transfer&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;The functional programming paradigm requires a mindset shift from imperative Pandas operations. We implemented structured training programs including weekly technical sessions and documentation to ensure successful adoption.&lt;/p&gt;
 &lt;h2 id=&#34;code-migration-patterns&#34;&gt;Code Migration Patterns&lt;/h2&gt;
 &lt;p&gt;Here are the most common patterns we encountered during our migration, with before/after comparisons to illustrate the transformation:&lt;/p&gt;
 &lt;h3 id=&#34;reading-data&#34;&gt;Reading Data&lt;/h3&gt;
@@ -414,70 +354,29 @@ Some of our downstream tools still needed Pandas DataFrames, so we needed conver
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (df1
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(df2, on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;id&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;)
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(df3, on&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;id&amp;#39;&lt;/span&gt;, how&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;left&amp;#39;&lt;/span&gt;))
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;[Diagram 6: Code Migration Patterns Comparison]&lt;/em&gt;&lt;/p&gt;
-&lt;h2 id=&#34;future-considerations-and-ecosystem-integration&#34;&gt;Future Considerations and Ecosystem Integration&lt;/h2&gt;
-&lt;h3 id=&#34;1-ecosystem-maturity&#34;&gt;1. &lt;strong&gt;Ecosystem Maturity&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;While Polars is rapidly evolving, some specialized libraries still expect Pandas DataFrames. We maintain hybrid approaches where necessary:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# When you need to use a Pandas-only library&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;polars_df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pl&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read_csv(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;data.csv&amp;#39;&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pandas_df &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; polars_df&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_pandas()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; some_pandas_only_function(pandas_df)
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;2-team-adoption-and-training&#34;&gt;2. &lt;strong&gt;Team Adoption and Training&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;The technical migration represents only half the challenge. Ensuring team adoption requires ongoing training and support. We continue monthly technical sessions to maintain expertise and share best practices.&lt;/p&gt;
-&lt;h3 id=&#34;3-performance-monitoring-and-optimization&#34;&gt;3. &lt;strong&gt;Performance Monitoring and Optimization&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;We maintain regular benchmarking of our pipelines to ensure continued performance gains and identify optimization opportunities. Continuous monitoring helps prevent regression to less efficient patterns.&lt;/p&gt;
-&lt;h2 id=&#34;conclusion-strategic-impact-of-the-migration&#34;&gt;Conclusion: Strategic Impact of the Migration&lt;/h2&gt;
-&lt;p&gt;The migration from Pandas to Polars delivered substantial value beyond performance improvements—it fundamentally transformed our data processing capabilities. The transformation enabled:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Before&lt;/strong&gt;: Sequential, time-constrained analysis with limited iteration&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;After&lt;/strong&gt;: Parallel experimentation with multiple analytical approaches&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The numbers speak for themselves:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;key-lessons-learned&#34;&gt;Key Lessons Learned&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Start Small, Scale Gradually&lt;/strong&gt;: Begin with your most performance-critical pipelines&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Leverage Lazy Evaluation&lt;/strong&gt;: Chain operations for optimal performance rather than multiple collect() calls&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Optimize Data Types&lt;/strong&gt;: Use appropriate data types to reduce memory usage&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Invest in Team Training&lt;/strong&gt;: The functional programming paradigm requires a mindset shift&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;conclusion-the-strategic-impact&#34;&gt;Conclusion: The Strategic Impact&lt;/h2&gt;
+&lt;p&gt;The migration from Pandas to Polars delivered substantial value beyond performance improvements and it fundamentally transformed our data processing capabilities:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;8-12x performance improvements&lt;/strong&gt; for large datasets&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;60% reduction in memory usage&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Feedback cycles&lt;/strong&gt; went from hours to minutes&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Cost savings&lt;/strong&gt; of 40% on cloud infrastructure&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;40% cost savings&lt;/strong&gt; on cloud infrastructure&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Team productivity&lt;/strong&gt; increased dramatically&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;But more importantly, this migration enabled our team to focus on what actually matters: deriving insights from data rather than fighting with performance bottlenecks.&lt;/p&gt;
-&lt;h2 id=&#34;strategic-recommendations&#34;&gt;Strategic Recommendations&lt;/h2&gt;
-&lt;p&gt;The data engineering landscape continues to evolve rapidly, with modern tools like Polars representing the future of high-performance data processing. For organizations working with large datasets, evaluating and adopting these technologies is becoming essential for maintaining competitive advantage.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Key recommendations for organizations considering similar migrations:&lt;/strong&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Conduct thorough technical evaluations&lt;/strong&gt; of multiple alternatives before committing to a solution&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Start with proof-of-concept projects&lt;/strong&gt; on your most performance-critical pipelines&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Invest in team training and knowledge transfer&lt;/strong&gt; to ensure successful adoption&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Plan for hybrid approaches&lt;/strong&gt; during transition periods&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Implement continuous performance monitoring&lt;/strong&gt; to maintain optimization benefits&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The technical migration represents only the beginning of the transformation. The real value emerges from how these tools change your team&amp;rsquo;s approach to data processing, enabling more sophisticated analysis and faster iteration cycles.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;For organizations considering similar migrations, I recommend starting with a comprehensive evaluation of your current bottlenecks and conducting proof-of-concept testing with your most challenging datasets. The performance gains and operational improvements we achieved demonstrate the significant value of modern data processing frameworks.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;If you&amp;rsquo;re interested in detailed benchmarks or specific implementation details from our UN data processing pipeline, I&amp;rsquo;m available to discuss our approach and lessons learned.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The technical migration represents only the beginning. The real value emerges from how these tools change your team&amp;rsquo;s approach to data processing, enabling more sophisticated analysis and faster iteration cycles.&lt;/p&gt;
+&lt;p&gt;For organizations considering similar migrations, I recommend starting with a comprehensive evaluation of your current bottlenecks and conducting proof-of-concept testing with your most challenging datasets. The performance gains and operational improvements we achieved demonstrate the significant value of modern data processing frameworks.&lt;/p&gt;
+&lt;p&gt;The future looks bright: we&amp;rsquo;re now exploring parallel processing with Polars&amp;rsquo; lazy evaluation, streaming data processing for real-time analytics, and GPU acceleration for even faster processing. The migration to Polars was just the beginning of our data engineering transformation.&lt;/p&gt;
 </description>
       <author>Zahir Abdi</author>
-      <guid>http://localhost:64217/posts/pandas-to-polars-migration/</guid>
-      <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
-    </item>
-    
-    <item>
-      <title>Example Content</title>
-      <link>http://localhost:64217/posts/example/example/</link>
-      <description>&lt;p&gt;&lt;img
-  src=&#34;../montrealfall.jpg&#34;
-  alt=&#34;Montreal Fall Scene&#34;
-  loading=&#34;lazy&#34;
-  decoding=&#34;async&#34;
-  class=&#34;full-width&#34;
-/&gt;
-
-&lt;/p&gt;
-&lt;p&gt;This is an example blog post showcasing the beautiful Montreal fall scenery.&lt;/p&gt;
-</description>
-      <author>Zahir Abdi</author>
-      <guid>http://localhost:64217/posts/example/example/</guid>
-      <pubDate>Mon, 25 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/pandas-to-polars-migration/</guid>
+      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
     </item>
     
   </channel>

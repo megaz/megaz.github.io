@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  {{ partial "head-posts.html" . }}
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    {{ partial "header.html" . }}
+    <article class="post">
+        <header class="post-header">
+          <h1 class="post-title">{{ .Title }}</h1>
+          <div class="post-meta">
+            <span class="post-date">Published {{ .Date.Format "January 2, 2006" }}</span>
+            <span class="post-reading-time">{{ .ReadingTime }} min read</span>
+          </div>
+        </header>
+        
+        <div class="post-content">
+          <div class="table-of-contents">
+            <h3>Contents</h3>
+            <ul>
+              <li><a href="#the-challenge-scaling-un-data-processing">The Challenge: Scaling UN Data Processing</a></li>
+              <li><a href="#technical-evaluation-why-polars-won">Technical Evaluation: Why Polars Won</a></li>
+              <li><a href="#polars-the-technical-breakthrough">Polars: The Technical Breakthrough</a></li>
+              <li><a href="#the-migration-key-performance-optimizations">The Migration: Key Performance Optimizations</a></li>
+              <li><a href="#the-migration-real-world-performance-results">The Migration: Real-World Performance Results</a></li>
+              <li><a href="#the-real-world-impact">The Real-World Impact</a></li>
+              <li><a href="#conclusion-the-strategic-impact">Conclusion: The Strategic Impact</a></li>
+            </ul>
+          </div>
+          
+          {{ .Content }}
+        </div>
+        
+        <footer class="post-footer">
+          <div class="post-date">
+            <span class="g time">{{.Date.Format "January 2, 2006"}} </span> &#8729;
+            {{ $taxonomy := "tags" }} {{ with .Param $taxonomy }}
+            {{ range $index, $tag := . }} {{ with $.Site.GetPage (printf "/%s/%s"
+            $taxonomy $tag) -}}
+            <a href="{{ .Permalink }}">{{ $tag | urlize }}</a>
+            {{- end -}} {{- end -}}
+            {{ end }}
+          </div>
+        </footer>
+    </article>
+  </div>
+</main>
+</body>
+</html>
